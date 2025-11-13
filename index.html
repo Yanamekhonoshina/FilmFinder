@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Film Finder</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <img src="ff-logo.png" alt="Film Finder Logo" class="logo-image">
+            <span class="logo-text">FILM FINDER</span>
+        </div>
+        <nav class="nav">
+            <a href="#" class="nav-link active" data-section="home">ГЛАВНАЯ</a>
+            <a href="#" class="nav-link" data-section="genres">ЖАНРЫ</a>
+            <a href="#" class="nav-link" data-section="test">ТЕСТ</a>
+            <div class="search">
+                <input type="text" placeholder="Поиск фильмов..." id="search-input">
+                <button class="search-btn" id="search-btn"></button>
+            </div>
+        </nav>
+        <div class="user-actions">
+            <button class="favorite-btn" id="header-favorite-btn">ИЗБРАННОЕ</button>
+        </div>
+    </header>
+    <section class="hero" id="home-section">
+        <div class="hero-banner">
+            <div class="banner-content">
+                <h1 class="main-title">НАЙДИ СВОЙ ИДЕАЛЬНЫЙ ФИЛЬМ</h1>
+                <button id="test-btn" class="hero-btn">ПРОЙТИ ТЕСТ ПОДБОРА</button>
+            </div>
+        </div>
+    </section>
+    <section class="recommendations-main">
+        <div class="container">
+            <h2 class="section-title">РЕКОМЕНДУЕМ К ПРОСМОТРУ</h2>
+            <div class="recommendations-grid" id="recommendations-grid">
+            </div>
+        </div>
+    </section>
+    <section class="search-results" id="search-results" style="display: none;">
+        <div class="container">
+            <h2 class="section-title" id="search-title">Результаты поиска</h2>
+            <div class="recommendations-grid" id="search-results-grid"></div>
+            <button id="back-to-home" class="nav-btn primary">Назад к главной</button>
+        </div>
+    </section>
+    <section class="genres" id="genres-section" style="display: none;">
+        <div class="container">
+            <h2 class="section-title">ОСНОВНЫЕ ЖАНРЫ КИНО</h2>
+            <div class="genres-main-grid">
+    <div class="genre-main-card" data-genre="comedy">
+        <div class="genre-image">
+            <img src="comedy.jpg" alt="Comedy" class="genre-image-pic">
+        </div>
+        <div class="genre-content">
+            <h3>КОМЕДИЯ</h3>
+            <p>Фильмы, которые поднимут настроение и заставят смеяться</p>
+            <div class="genre-stats">
+                <span>150+ фильмов</span>
+            </div>
+        </div>
+    </div>
+    <div class="genre-main-card" data-genre="action">
+        <div class="genre-image">
+            <img src="action.jpg" alt="Action" class="genre-image-pic">
+        </div>
+        <div class="genre-content">
+            <h3>БОЕВИК</h3>
+            <p>Захватывающие приключения, экшен и адреналин</p>
+            <div class="genre-stats">
+                <span>200+ фильмов</span>
+            </div>
+        </div>
+    </div>
+    <div class="genre-main-card" data-genre="drama">
+        <div class="genre-image">
+            <img src="drama.jpg" alt="Drama" class="genre-image-pic">
+        </div>
+        <div class="genre-content">
+            <h3>ДРАМА</h3>
+            <p>Глубокие истории, которые заставят задуматься</p>
+            <div class="genre-stats">
+                <span>180+ фильмов</span>
+            </div>
+        </div>
+    </div>
+    <div class="genre-main-card" data-genre="sci-fi">
+        <div class="genre-image">
+            <img src="sci-fi.jpg" alt="Sci-Fi" class="genre-image-pic">
+        </div>
+        <div class="genre-content">
+            <h3>ФАНТАСТИКА</h3>
+            <p>Путешествия в будущее и другие миры</p>
+            <div class="genre-stats">
+                <span>120+ фильмов</span>
+            </div>
+        </div>
+    </div>
+    <div class="genre-main-card" data-genre="fantasy">
+        <div class="genre-image">
+            <img src="fantasy.jpg" alt="Fantasy" class="genre-image-pic">
+        </div>
+        <div class="genre-content">
+            <h3>ФЭНТЕЗИ</h3>
+            <p>Мир магии, чудес и мифических существ</p>
+            <div class="genre-stats">
+                <span>90+ фильмов</span>
+            </div>
+        </div>
+    </div>
+    <div class="genre-main-card" data-genre="horror">
+        <div class="genre-image">
+            <img src="horror.jpg" alt="Horror" class="genre-image-pic">
+        </div>
+        <div class="genre-content">
+            <h3>УЖАСЫ</h3>
+            <p>Для любителей пощекотать нервы</p>
+            <div class="genre-stats">
+                <span>80+ фильмов</span>
+            </div>
+        </div>
+    </div>
+</div>
+    </section>
+    <section class="genres" id="genre-section" style="display: none;">
+        <div class="container">
+            <h2 class="section-title" id="genre-title"></h2>
+            <div class="recommendations-grid" id="genre-films-grid"></div>
+            <div class="pagination" id="genre-pagination">
+                <button class="nav-btn" id="prev-page" disabled>Предыдущая</button>
+                <button class="nav-btn" id="next-page">Следующая</button>
+            </div>
+            <button id="back-to-genres" class="nav-btn primary">Назад к жанрам</button>
+        </div>
+    </section>
+    <section class="test-section" id="test-section" style="display: none;">
+        <div class="test-container">
+            <h2 class="test-main-title">ТЕСТ ДЛЯ ПОДБОРА ФИЛЬМА</h2>
+            <p class="test-description">Ответьте на 4 вопроса, и наш алгоритм подберет идеальный фильм!</p>
+            <div class="test-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <span class="progress-text" id="progress-text">Вопрос 1 из 4</span>
+            </div>
+            <form class="test-form" id="test-form">
+                <div class="question active" id="question1">
+                    <h3>ВОПРОС 1</h3>
+                    <p class="question-text">Какое настроение у вас сегодня?</p>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="mood" value="funny">
+                            <span class="option-text">Веселое, хочется посмеяться</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="mood" value="thoughtful">
+                            <span class="option-text">Задумчивое, хочется подумать</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="mood" value="adventurous">
+                            <span class="option-text">Приключенческое, хочется экшена</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="mood" value="romantic">
+                            <span class="option-text">Романтическое</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="question" id="question2">
+                    <h3>ВОПРОС 2</h3>
+                    <p class="question-text">Какой хронометраж предпочитаете?</p>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="duration" value="short">
+                            <span class="option-text">Короткий (до 1,5 часов)</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="duration" value="medium">
+                            <span class="option-text">Средний (1,5 - 2 часа)</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="duration" value="long">
+                            <span class="option-text">Длинный (более 2 часов)</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="question" id="question3">
+                    <h3>ВОПРОС 3</h3>
+                    <p class="question-text">Предпочитаемый период действия?</p>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="period" value="modern">
+                            <span class="option-text">Современность</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="period" value="historical">
+                            <span class="option-text">Исторический</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="period" value="future">
+                            <span class="option-text">Будущее</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="period" value="fantasy">
+                            <span class="option-text">Фэнтези-мир</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="question" id="question4">
+                    <h3>ВОПРОС 4</h3>
+                    <p class="question-text">Как относитесь к напряженным сюжетам?</p>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="tension" value="low">
+                            <span class="option-text">Предпочитаю спокойные сюжеты</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="tension" value="medium">
+                            <span class="option-text">В меру напряженные</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="tension" value="high">
+                            <span class="option-text">Обожаю саспенс и триллеры</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="test-navigation">
+                    <button type="button" class="nav-btn" id="prev-btn" disabled>НАЗАД</button>
+                    <button type="button" class="nav-btn primary" id="next-btn">ДАЛЕЕ</button>
+                    <button type="submit" class="nav-btn success" id="submit-btn" style="display: none;">ПОЛУЧИТЬ РЕКОМЕНДАЦИЮ</button>
+                </div>
+            </form>
+            <div class="test-result" id="test-result" style="display: none;">
+                <div class="result-content">
+                    <h3>ВАША ПЕРСОНАЛЬНАЯ РЕКОМЕНДАЦИЯ!</h3>
+                    <div class="recommended-movie" id="recommended-movie"></div>
+                    <button class="restart-test-btn" onclick="restartTest()">ПРОЙТИ ТЕСТ ЗАНОВО</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="favorites" id="favorites-section" style="display: none;">
+        <div class="container">
+            <div class="favorites-header">
+                <h2>ИЗБРАННЫЕ ФИЛЬМЫ</h2>
+                <p>Здесь собраны фильмы, которые вам понравились</p>
+            </div>
+            <div class="favorites-grid" id="favorites-grid">
+                <div class="empty-favorites">
+                    В избранном пока пусто<br>
+                    <small>Добавляйте фильмы из рекомендаций или теста</small>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="modal" id="movie-modal" style="display: none;">
+        <div class="modal-content movie-modal-content">
+            <span class="close-btn" id="close-movie-modal">&times;</span>
+            <div id="movie-details"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
